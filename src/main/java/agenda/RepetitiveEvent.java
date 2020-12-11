@@ -8,6 +8,8 @@ import java.time.temporal.ChronoUnit;
  * Description : A repetitive Event
  */
 public class RepetitiveEvent extends Event {
+    ChronoUnit frequency;
+    private List<LocalDate> exceptions = new ArrayList<>();
     /**
      * Constructs a repetitive event
      *
@@ -23,8 +25,8 @@ public class RepetitiveEvent extends Event {
      */
     public RepetitiveEvent(String title, LocalDateTime start, Duration duration, ChronoUnit frequency) {
         super(title, start, duration);
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        this.frequency = frequency;
+        
     }
 
     /**
@@ -33,8 +35,35 @@ public class RepetitiveEvent extends Event {
      * @param date the event will not occur at this date
      */
     public void addException(LocalDate date) {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        exceptions.add(date);
+    }
+    
+    public boolean isInDay(LocalDate aDay) {
+        LocalDateTime myStart = this.getStart();
+        Duration myDuration = this.getDuration();
+        LocalDateTime dayTimeEnd = myStart.plus(myDuration);
+        boolean retour = false;
+        for (LocalDate date : exceptions){
+            if (date.isEqual(aDay)){
+                return false;
+            }
+        }
+        if (myStart.toLocalDate().isEqual(aDay)){
+            return true;
+        }
+        
+        while (myStart.toLocalDate().isBefore(aDay) ){
+        dayTimeEnd = myStart.plus(myDuration);
+        
+        if (myStart.toLocalDate().isBefore(aDay) || myStart.toLocalDate().isEqual(aDay)){
+            if (dayTimeEnd.toLocalDate().isAfter(aDay) || dayTimeEnd.toLocalDate().isEqual(aDay)) {
+                retour = true;
+            }
+        }
+        myStart = myStart.plus(1, frequency);
+        }       
+        return retour;
+        
     }
 
     /**
@@ -42,8 +71,7 @@ public class RepetitiveEvent extends Event {
      * @return the type of repetition
      */
     public ChronoUnit getFrequency() {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");    
+        return frequency;   
     }
 
 }
